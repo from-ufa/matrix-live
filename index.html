@@ -1,152 +1,172 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Matrix — живая сеть</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Matrix — эксплорер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0e1014;
-    --card: #171a20;
-    --line: #2a2f38;
-    --text: #ececec;
-    --muted: #8b919c;
-    --ib: #7aa2ff;
-    --ob: #e2b657;
-    --tx: #6fcf97;
-    --bad: #e07a7a;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--text);
-    font-family: "IBM Plex Sans", system-ui, sans-serif; }
-  body { min-height: 100vh; padding: 28px 22px 48px; }
-  .wrap { max-width: 1180px; margin: 0 auto; }
-  header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end;
-    margin-bottom: 28px; flex-wrap: wrap; }
-  h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
-  .live { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--tx); box-shadow: 0 0 0 4px #6fcf9722; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
-  @media (max-width: 800px) { .stats { grid-template-columns: repeat(2, 1fr); } .cols { grid-template-columns: 1fr; } }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-  .stat b { display: block; font-size: 22px; font-weight: 600; letter-spacing: -0.03em; }
-  .stat span { color: var(--muted); font-size: 12px; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr 1.15fr; gap: 14px; }
-  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; min-height: 420px;
-    display: flex; flex-direction: column; overflow: hidden; }
-  section h2 { margin: 0; padding: 14px 16px 10px; font-size: 14px; font-weight: 600;
-    display: flex; justify-content: space-between; align-items: baseline; }
-  section h2 em { font-style: normal; color: var(--muted); font-weight: 400; font-size: 12px; }
-  .list { padding: 0 8px 12px; overflow: auto; flex: 1; }
-  .row { padding: 10px 8px; border-top: 1px solid var(--line); display: grid; gap: 2px; }
-  .row:first-child { border-top: none; }
-  .id { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--muted); }
-  .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-  .h { font-weight: 600; font-size: 14px; }
-  .ib .h { color: var(--ib); }
-  .ob .h { color: var(--ob); }
-  .tx .h { color: var(--tx); }
-  .meta { color: var(--muted); font-size: 12px; }
-  .empty { color: var(--muted); padding: 28px 16px; font-size: 13px; line-height: 1.45; }
-  .tag { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+:root{--bg:#0e1014;--card:#171a20;--line:#2a2f38;--text:#ececec;--muted:#8b919c;--ib:#7aa2ff;--ob:#e2b657;--tx:#6fcf97}
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:"IBM Plex Sans",system-ui,sans-serif}
+body{min-height:100vh;padding:24px 18px 48px}
+.wrap{max-width:1100px;margin:0 auto}
+a{color:inherit;text-decoration:none} a:hover{text-decoration:underline}
+h1{font-size:22px;font-weight:600;margin:0;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:22px}
+.live{color:var(--muted);font-size:13px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--tx);margin-right:6px;box-shadow:0 0 0 4px #6fcf9722}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:800px){.stats,.cols{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.stat{padding:14px 16px}.stat b{display:block;font-size:22px;font-weight:600}.stat span{color:var(--muted);font-size:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:12px}
+section.card{min-height:360px;display:flex;flex-direction:column;overflow:hidden}
+section h2{margin:0;padding:14px 16px 8px;font-size:14px;display:flex;justify-content:space-between}
+section h2 em{font-style:normal;color:var(--muted);font-weight:400;font-size:12px}
+.list{padding:0 8px 12px;overflow:auto;flex:1}
+.row{display:block;padding:10px 8px;border-top:1px solid var(--line)}
+.row:first-child{border-top:none}
+.id{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all}
+.h{font-weight:600;font-size:14px}
+.ib .h{color:var(--ib)}.ob .h{color:var(--ob)}.tx .h{color:var(--tx)}
+.meta{color:var(--muted);font-size:12px}
+.empty{color:var(--muted);padding:24px 14px;font-size:13px;line-height:1.45}
+.back{color:var(--muted);font-size:13px;display:inline-block;margin-bottom:12px}
+.detail{padding:8px 2px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:8px 12px;font-size:14px;margin:16px 0}
+.kv span{color:var(--muted)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:8px 6px;border-top:1px solid var(--line);text-align:left}
+th{color:var(--muted);font-weight:500}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Живая сеть Matrix</h1>
-        <div class="sub">Только то, что появилось после запуска этой страницы. Без старой истории.</div>
-      </div>
-      <div class="live"><span class="dot"></span><span id="updated">подключаюсь…</span></div>
-    </header>
-    <div class="stats">
-      <div class="stat"><b id="h">—</b><span>высота</span></div>
-      <div class="stat"><b id="ib">—</b><span>подблоки с запуска</span></div>
-      <div class="stat"><b id="ob">—</b><span>блоки с запуска</span></div>
-      <div class="stat"><b id="mp">—</b><span>в мемпуле сейчас</span></div>
-    </div>
-    <div class="cols">
-      <section>
-        <h2>Подблоки <em>input-blocks · быстро</em></h2>
-        <div class="list" id="ibs"><div class="empty">Жду первый подблок…</div></div>
-      </section>
-      <section>
-        <h2>Блоки <em>ordering · ~минута</em></h2>
-        <div class="list" id="obs"><div class="empty">Жду первый новый блок…</div></div>
-      </section>
-      <section>
-        <h2>Транзакции <em>мемпул и блоки</em></h2>
-        <div class="list" id="txs"><div class="empty">Пока тихо.</div></div>
-      </section>
-    </div>
-  </div>
+<div class="wrap" id="app"></div>
 <script>
-const $ = (id) => document.getElementById(id);
-const short = (s) => s ? s.slice(0, 10) + "…" + s.slice(-6) : "—";
-const erg = (nano) => {
-  if (nano == null) return "";
-  return (nano / 1e9).toLocaleString("ru-RU", { maximumFractionDigits: 4 }) + " ERG";
-};
-function clock(iso) {
-  if (!iso) return "";
-  return iso.slice(11, 19);
+const $ = (h) => { const d=document.createElement('div'); d.innerHTML=h.trim(); return d.innerHTML; }
+const short = (s,a=10,b=6) => !s ? '—' : (s.length<=a+b+1?s:s.slice(0,a)+'…'+s.slice(-b));
+const clock = (iso) => iso ? iso.slice(11,19) : '';
+const erg = (n) => n==null ? '' : (n/1e9).toLocaleString('ru-RU',{maximumFractionDigits:4})+' ERG';
+const link = (kind,id,text) => `<a href="#/${kind}/${id}">${text||short(id)}</a>`;
+let DB = {info:{},inputBlocks:[],orderingBlocks:[],txs:[],addresses:{},startedAt:'',updatedAt:''};
+const urls = ['/api/db.json','https://raw.githubusercontent.com/from-ufa/matrix-live/main/db.json','db.json','/api/live.json','https://raw.githubusercontent.com/from-ufa/matrix-live/main/live.json'];
+
+function route(){
+  const h = location.hash.slice(2) || '';
+  const [kind, ...rest] = h.split('/');
+  const id = rest.join('/');
+  if(kind==='b' && id) return viewBlock(id);
+  if(kind==='i' && id) return viewIB(id);
+  if(kind==='tx' && id) return viewTx(id);
+  if(kind==='a' && id) return viewAddr(id);
+  return viewHome();
 }
-function rows(items, kind, render) {
-  if (!items || !items.length) return '<div class="empty">Пока пусто — жду сеть.</div>';
-  return items.map(render).join("");
+function shell(inner, extra=''){
+  const i=DB.info||{};
+  return `<header>
+    <div><h1><a href="#/">Эксплорер Matrix</a></h1>
+    <div class="sub">С ${clock(DB.startedAt) || 'запуска'} · без старой истории · ${extra}</div></div>
+    <div class="live"><span class="dot"></span>обновлено ${clock(DB.updatedAt)}</div>
+  </header>
+  <div class="stats">
+    <div class="stat"><b>${i.height??'—'}</b><span>высота</span></div>
+    <div class="stat"><b>${(DB.inputBlocks||[]).length}</b><span>подблоки</span></div>
+    <div class="stat"><b>${(DB.orderingBlocks||[]).length}</b><span>блоки</span></div>
+    <div class="stat"><b>${i.mempool??'—'}</b><span>мемпул</span></div>
+  </div>` + inner;
 }
-function paint(d) {
-  const i = d.info || {};
-  $("h").textContent = i.height ?? "—";
-  $("ib").textContent = (d.inputBlocks || []).length;
-  $("ob").textContent = (d.orderingBlocks || []).length;
-  $("mp").textContent = i.mempool ?? "—";
-  $("updated").textContent = "обновлено " + clock(d.updatedAt) + " · с " + clock(d.startedAt);
-  $("ibs").innerHTML = rows(d.inputBlocks, "ib", (b) => `
-    <div class="row ib">
-      <div class="top"><span class="h">#${b.height ?? "—"}</span><span class="tag">подблок</span></div>
-      <div class="id">${short(b.id)}</div>
-      <div class="meta">${clock(b.seenAt)}</div>
-    </div>`);
-  $("obs").innerHTML = rows(d.orderingBlocks, "ob", (b) => `
-    <div class="row ob">
-      <div class="top"><span class="h">#${b.height ?? "—"}</span><span class="meta">${b.txs != null ? b.txs + " tx" : ""}</span></div>
-      <div class="id">${short(b.id)}</div>
-      <div class="meta">${clock(b.seenAt)}</div>
-    </div>`);
-  $("txs").innerHTML = rows(d.txs, "tx", (t) => `
-    <div class="row tx">
-      <div class="top"><span class="h">${t.source === "mempool" ? "мемпул" : "в блоке " + (t.height ?? "")}</span>
-        <span class="meta">${erg(t.nano)}</span></div>
-      <div class="id">${short(t.id)}</div>
-      <div class="meta">${t.inputs}→${t.outputs} · ${clock(t.seenAt)}</div>
-    </div>`);
+function viewHome(){
+  const ibs = DB.inputBlocks||[];
+  const obs = DB.orderingBlocks||[];
+  const txs = DB.txs||[];
+  const col = (title,em,items,empty,row) => `<section class="card"><h2>${title} <em>${em}</em></h2>
+    <div class="list">${items.length?items.map(row).join(''):`<div class="empty">${empty}</div>`}</div></section>`;
+  return shell(`<div class="cols">
+    ${col('Подблоки','input-blocks',ibs,'Жду подблок…', b=>`<a class="row ib" href="#/i/${b.id}">
+      <div class="h">#${b.height??'—'}</div><div class="id">${short(b.id)}</div><div class="meta">${clock(b.seenAt)}</div></a>`)}
+    ${col('Блоки','ordering',obs,'Жду блок…', b=>`<a class="row ob" href="#/b/${b.id}">
+      <div class="h">#${b.height??'—'}</div><div class="id">${short(b.id)}</div>
+      <div class="meta">${b.txs!=null?b.txs+' tx · ':''}${clock(b.seenAt)}</div></a>`)}
+    ${col('Транзакции','мемпул и блоки',txs,'Пока тихо.', t=>`<a class="row tx" href="#/tx/${t.id}">
+      <div class="h">${t.source==='mempool'?'мемпул':('блок '+(t.height??''))}</div>
+      <div class="id">${short(t.id)}</div><div class="meta">${erg(t.nano)} · ${clock(t.seenAt)}</div></a>`)}
+  </div>`);
 }
-async function tick() {
-  try {
-    const urls = ["/api/live.json", "https://raw.githubusercontent.com/from-ufa/matrix-live/main/live.json", "live.json"];
-    let r, lastErr;
-    for (const u of urls) {
-      try {
-        r = await fetch(u + "?t=" + Date.now(), { cache: "no-store" });
-        if (r.ok) break;
-        lastErr = r.status;
-      } catch (e) { lastErr = e; }
-    }
-    if (!r || !r.ok) throw new Error(lastErr);
-    if (!r.ok) throw new Error(r.status);
-    paint(await r.json());
-  } catch (e) {
-    $("updated").textContent = "нет связи с коллектором";
+function viewBlock(id){
+  const b=(DB.orderingBlocks||[]).find(x=>x.id===id);
+  const txs=(DB.txs||[]).filter(t=>t.blockId===id);
+  if(!b) return shell(`<a class="back" href="#/">← лента</a><div class="empty">Блок ещё не в индексе. Появится, когда нода его отдаст.</div>`);
+  return shell(`<a class="back" href="#/">← лента</a>
+    <div class="card detail" style="padding:18px 20px">
+      <div class="h ob">Блок #${b.height}</div>
+      <div class="kv"><span>id</span><div class="mono">${b.id}</div>
+      <span>время</span><div>${clock(b.seenAt)}</div>
+      <span>транзакций</span><div>${b.txs??txs.length}</div></div>
+      <table><tr><th>транза</th><th>сумма</th></tr>
+      ${txs.map(t=>`<tr><td>${link('tx',t.id)}</td><td>${erg(t.nano)}</td></tr>`).join('')||'<tr><td colspan="2" class="meta">нет в индексе</td></tr>'}
+      </table>
+    </div>`,'блок');
+}
+function viewIB(id){
+  const b=(DB.inputBlocks||[]).find(x=>x.id===id);
+  if(!b) return shell(`<a class="back" href="#/">← лента</a><div class="empty">Подблок не найден.</div>`);
+  return shell(`<a class="back" href="#/">← лента</a>
+    <div class="card detail" style="padding:18px 20px">
+      <div class="h ib">Подблок</div>
+      <div class="kv"><span>id</span><div class="mono">${b.id}</div>
+      <span>высота</span><div>#${b.height??'—'}</div>
+      <span>ordering</span><div>${b.ordering?link('b',b.ordering):'—'}</div>
+      <span>увидели</span><div>${clock(b.seenAt)}</div></div>
+      <p class="meta">Нода не отдаёт транзы внутри подблока по REST. Они появятся в следующем блоке.</p>
+    </div>`,'подблок');
+}
+function viewTx(id){
+  const t=(DB.txs||[]).find(x=>x.id===id);
+  if(!t) return shell(`<a class="back" href="#/">← лента</a><div class="empty">Транзакция ещё не в индексе.</div>`);
+  const outs=t.outputs||[];
+  return shell(`<a class="back" href="#/">← лента</a>
+    <div class="card detail" style="padding:18px 20px">
+      <div class="h tx">Транзакция</div>
+      <div class="kv"><span>id</span><div class="mono">${t.id}</div>
+      <span>откуда</span><div>${t.source==='mempool'?'мемпул':('блок '+(t.height??''))}</div>
+      <span>блок</span><div>${t.blockId?link('b',t.blockId):'ещё не в блоке'}</div>
+      <span>сумма</span><div>${erg(t.nano)}</div></div>
+      <table><tr><th>#</th><th>адрес</th><th>ERG</th></tr>
+      ${outs.map(o=>`<tr><td>${o.i}</td><td>${o.address?link('a',o.address,short(o.address,8,6)):'—'}</td><td>${erg(o.value)}</td></tr>`).join('')}
+      </table>
+    </div>`,'транза');
+}
+function viewAddr(id){
+  const a=(DB.addresses||{})[id];
+  const txs=(DB.txs||[]).filter(t=>(t.outputs||[]).some(o=>o.address===id));
+  return shell(`<a class="back" href="#/">← лента</a>
+    <div class="card detail" style="padding:18px 20px">
+      <div class="h">Адрес</div>
+      <div class="mono" style="margin:10px 0 16px">${id}</div>
+      <div class="kv"><span>пришло</span><div>${erg(a?a.in:0)}</div>
+      <span>транзакций</span><div>${a?a.n:txs.length}</div></div>
+      <table><tr><th>транза</th><th>сумма</th></tr>
+      ${txs.map(t=>`<tr><td>${link('tx',t.id)}</td><td>${erg(t.nano)}</td></tr>`).join('')||'<tr><td colspan="2" class="meta">пока пусто</td></tr>'}
+      </table>
+    </div>`,'адрес');
+}
+async function load(){
+  for(const u of urls){
+    try{
+      const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok) continue;
+      const d=await r.json();
+      if(d && (d.info||d.txs||d.inputBlocks)){ DB=d; if(!DB.addresses) DB.addresses={}; return; }
+    }catch(e){}
   }
 }
-tick();
-setInterval(tick, 1500);
+async function tick(){ await load(); document.getElementById('app').innerHTML=route(); }
+window.addEventListener('hashchange',()=>{ document.getElementById('app').innerHTML=route(); });
+tick(); setInterval(tick, 2000);
 </script>
 </body>
 </html>
