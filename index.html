@@ -129,7 +129,7 @@ function paint(d) {
 }
 async function tick() {
   try {
-    const urls = ["/api/live.json", "live.json"];
+    const urls = ["/api/live.json", "https://raw.githubusercontent.com/from-ufa/matrix-live/main/live.json", "live.json"];
     let r, lastErr;
     for (const u of urls) {
       try {
